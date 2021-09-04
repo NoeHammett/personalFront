@@ -1,20 +1,81 @@
 import React, {useState , useEffect} from 'react';
 import AppTopbar from "../AppTopbar";
 import AppFooter from '../AppFooter';
-import 'primeflex/primeflex.css';
-import '../css/Tabview.css';
 import { Button } from 'primereact/button';
 import { TabView,TabPanel } from 'primereact/tabview';
 import { InputText } from 'primereact/inputtext';
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
 import { Calendar } from 'primereact/calendar';
+import { useForm, Controller } from 'react-hook-form';
 
+import UsuariosService from '../services/UsuariosService'
+import 'primeflex/primeflex.css';
+import '../css/Tabview.css';
 
 const Usuarios = () => {
-  const [txtNombre, setTxtNombre] = useState('');
-  const [txtPrimerApellido, setTxtPrimerApellido] = useState('');
-  const [txtSegundoApellido, setTxtSegundoApellido] = useState('');
-  const [txtCorreo, setTxtCorreo] = useState('');
-  const [date14, setDate14] = useState(null);
+  const [personas, setPersonas] = useState({});
+
+  //Objeto de la persona
+  const [person, setPerson] = useState ({
+      nombre:"",
+      primer_apellido:"",
+      segundo_apellido:"",
+      email:""
+  });
+  
+  //SERVICES
+  const usuarioService = new UsuariosService();
+  const getPerson = () => {
+     usuarioService.obtenerPersonas().then(data => setPersonas(data));
+     console.log("Personas",personas)
+    };
+   
+    
+//    const getPersonById = ()=>{
+//     usuarioService.obtenerPersonaById().then(data => setPerson(data));
+//    }
+
+   const addPerson = async()=>{
+   await usuarioService.agregarPerson(person) ;
+   getPerson();
+   }
+    
+    useEffect(() => {
+        getPerson();
+    }, []);
+
+
+    const clean = () =>{
+
+    }
+
+
+    // const actionBodyTemplate = (rowData) => {
+    //     return (
+    //       <React.Fragment>
+    //         <Button
+    //           icon="pi pi-pencil"
+    //           className="p-button-rounded p-button-success p-mr-2"
+    //           onClick={() => editProduct(rowData)}
+    //         />
+    //         <Button
+    //           icon="pi pi-trash"
+    //           className="p-button-rounded p-button-warning"
+    //           onClick={() => confirmDeleteProduct(rowData)}
+    //         />
+    //       </React.Fragment>
+    //     );
+    //   };
+
+    //   const editProduct = (person) => {
+    //     setPerson({ ...person });
+    //   };
+    //   const confirmDeleteProduct = (person) => {
+    //     setPerson({...person});
+    //   };
+
+
 
     return (
       <div >
@@ -26,45 +87,65 @@ const Usuarios = () => {
               <div className="card">
                 <TabView className="tabview-custom">
                     <TabPanel header="Registro Nuevo Usuario">
-                    <div className="p-field p-col-12 p-md-4">
+                    <form>
+                    <div className="form-demo" >
+                        <div className="p-field p-col-12 p-md-4">
+                            <span className="p-float-label">
+                                <InputText id="nombre" onChange={(e) => setPerson({...person,nombre:e.target.value})}  value={person.nombre}/>
+                                <label htmlFor="txtNombre">Ingresa Nombre</label>
+                            </span>
+                        </div>
+                        <div className="p-field p-col-12 p-md-4">
+                            <span className="p-float-label">
+                                <InputText id="primer_apellido" onChange={(e) =>setPerson({...person,primer_apellido:e.target.value})}  value ={person.primer_apellido} />
+                                <label htmlFor="txtPrimerApellido">Ingresa Primer Apellido</label>
+                            </span>
+                        </div>
+                        <div className="p-field p-col-12 p-md-4">
+                            <span className="p-float-label">
+                                <InputText id="segundo_apellido" onChange={(e) =>setPerson({...person,segundo_apellido:e.target.value})} value={person.segundo_apellido} />
+                                <label htmlFor="txtSegundoApellido">Ingresa Segundo Apellido</label>
+                            </span>
+                        </div>
+                        <div className="p-field p-col-12 p-md-4">
+                            <span className="p-float-label">
+                                <InputText id="correo" onChange={(e) => setPerson({...person,email:e.target.value})} value={person.email}  />
+                                <label htmlFor="txtCorreo">Ingresa Correo</label>
+                            </span>
+                        </div>
+                        {/* <div className="p-field p-col-12 p-md-4">
                         <span className="p-float-label">
-                            <InputText id="txtNombre" value={txtNombre} onChange={(e) => setTxtNombre(e.target.value)} />
-                            <label htmlFor="txtNombre">Ingresa Nombre</label>
-                        </span>
-                    </div>
-                    <div className="p-field p-col-12 p-md-4">
-                        <span className="p-float-label">
-                            <InputText id="txtPrimerApellido" value={txtPrimerApellido} onChange={(e) => setTxtPrimerApellido(e.target.value)} />
-                            <label htmlFor="txtPrimerApellido">Ingresa Primer Apellido</label>
-                        </span>
-                    </div>
-                    <div className="p-field p-col-12 p-md-4">
-                        <span className="p-float-label">
-                            <InputText id="txtSegundoApellido" value={txtSegundoApellido} onChange={(e) => setTxtSegundoApellido(e.target.value)} />
-                            <label htmlFor="txtSegundoApellido">Ingresa Segundo Apellido</label>
-                        </span>
-                    </div>
-                    <div className="p-field p-col-12 p-md-4">
-                    <span className="p-float-label">
-                            <label htmlFor="txtSegundoApellido">Ingresa Segundo Apellido</label>
-                            <Calendar id="mask" value={date14} onChange={(e) => setDate14(e.value)}/>
-                        </span>                     
-                    </div>
-                    <div className="p-field p-col-12 p-md-4">
-                        <span className="p-float-label">
-                            <InputText id="txtCorreo" value={txtCorreo} onChange={(e) => setTxtCorreo(e.target.value)} />
-                            <label htmlFor="txtCorreo">Ingresa Correo</label>
-                        </span>
-                    </div>
-                    <div className="p-field p-col-12 p-md-4">
-                        <Button label="Guardar" icon="pi pi-check" />
-                    </div>            
+                                <label htmlFor="txtSegundoApellido">Ingresa Segundo Apellido</label>
+                                <Calendar id="mask" value={date14} onChange={(e) => setDate14(e.value)}/>
+                            </span>
+                        </div> */}
 
+                        <div className="p-field p-col-12 p-md-4">
+                            <Button  onClick={addPerson} label="Guardar" />
+                        </div>
+                    </div>
+                    </form>
                     </TabPanel>
                     <TabPanel header="Lista de Usuarios">
-                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-                        architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione
-                    voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.</p>
+                       <h1>Personas Registradas</h1>
+                    <div className="card">
+                        <DataTable
+                        value={personas}
+                        paginator
+                        rows={10}
+                        rowsPerPageOptions={[10, 25, 50]}
+                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
+                        >
+                        <Column field="nombre" header="Nombre" ></Column>
+                        <Column field="primer_apellido" header="Primer Apellido" ></Column>
+                        <Column field="segundo_apellido" header="Segundo Apellido" ></Column>
+                        <Column field="nacimiento" header="Nacimiento" ></Column>
+                        <Column field="email" header="Email" ></Column>
+                        {/* <Column body={actionBodyTemplate}></Column> */}
+                        </DataTable>
+                    </div>
+
                     </TabPanel>
                     <TabPanel header="Buscar Usuario">
                         <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
@@ -74,9 +155,8 @@ const Usuarios = () => {
                 </TabView>
             </div>
               </div>
-        
+
         </div>
-        
       </div>
     );
 }
