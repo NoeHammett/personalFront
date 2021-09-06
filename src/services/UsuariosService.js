@@ -14,7 +14,7 @@ export default class UsuariosService{
     // }
     
     agregarPerson (person){
-    // console.log(person)
+    // console.log("Service", person)
     let agregaPerson = 'api/Person/addPerson';
     return axios.post(agregaPerson , person).then(response  =>  console.log(response.data)).
     catch(error => {console.log(error.response.data.message)});
