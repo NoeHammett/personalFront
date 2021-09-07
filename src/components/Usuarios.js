@@ -22,8 +22,11 @@ const Usuarios = () => {
       nombre:"",
       primer_apellido:"",
       segundo_apellido:"",
-      email:""
+      email:"",
+      nacimiento:""
   });
+
+  const [fecha, setFecha] = useState(null);
   
   // Manejo del form
   const [formData, setFormData] = useState({})
@@ -47,10 +50,7 @@ const Usuarios = () => {
 //    const getPersonById = ()=>{
 //     usuarioService.obtenerPersonaById().then(data => setPerson(data));
 //    }
-   const addPerson = async()=>{
-   await usuarioService.agregarPerson(person) ;
-   getPerson();
-   }
+  
     
     useEffect(() => {
         getPerson();
@@ -140,12 +140,15 @@ const Usuarios = () => {
                                 <label htmlFor="txtCorreo">Ingresa Correo</label>
                             </span>
                         </div>
-                        {/* <div className="p-field p-col-12 p-md-4">
+                        <div className="p-field p-col-12 p-md-4">
                         <span className="p-float-label">
-                                <label htmlFor="txtSegundoApellido">Ingresa Segundo Apellido</label>
-                                <Calendar id="mask" value={date14} onChange={(e) => setDate14(e.value)}/>
-                            </span>
-                        </div> */}
+                        <Controller name="nacimiento" control={control}  render={({ field }) => (
+                            <Calendar id={field.name} {...field}  required="true" dateFormat="dd/mm/yy"/>
+                        )}
+                        />
+                        <label htmlFor="txtNacimiento">Selecciona Fecha de Nacimiento</label>
+                        </span>
+                        </div>
                         <div className="p-field p-col-12 p-md-4">
                             {/* <Button  onClick={addPerson} label="Guardar" /> */}
                             <Button type="submit" label="Guardar" className="p-mt-2" />
