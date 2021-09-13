@@ -8,7 +8,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Calendar } from 'primereact/calendar';
 import { useForm, Controller } from 'react-hook-form';
-
+import { InputNumber } from 'primereact/inputnumber';
 
 import UsuariosService from '../services/UsuariosService'
 import 'primeflex/primeflex.css';
@@ -19,27 +19,37 @@ const Usuarios = () => {
 
   //Objeto de la persona
   const [person, setPerson] = useState ({
+      id: "",
       nombre:"",
       primer_apellido:"",
       segundo_apellido:"",
       email:"",
       nacimiento:""
   });
+  const [requestPerson, setRequestPerson] = useState ({
+    id: null
+});
 
-  const [fecha, setFecha] = useState(null);
-  
   // Manejo del form
   const [formData, setFormData] = useState({})
 
-  const { control, handleSubmit, reset } = useForm({ person });
+  const { control, handleSubmit, reset } = useForm({person},{requestPerson});
 
   const onSubmit = (data) => {
       setFormData(data);  
       // console.log("Formulario",data);
       usuarioService.agregarPerson(data) ;
-      getPerson();
       reset(person);
+      getPerson();
   };
+
+  const onBusqueda = (data) => {
+    setFormData(data);  
+    console.log("Busqueda",data.id);
+    usuarioService.obtenerPersonaById(data.id).then(data => setPerson(data)); 
+    reset(requestPerson);
+};
+console.log("Persona",person);
 
   //SERVICES
   const usuarioService = new UsuariosService();
@@ -47,10 +57,6 @@ const Usuarios = () => {
      usuarioService.obtenerPersonas().then(data => setPersonas(data));
      console.log("Personas",personas)
     };
-//    const getPersonById = ()=>{
-//     usuarioService.obtenerPersonaById().then(data => setPerson(data));
-//    }
-  
     
     useEffect(() => {
         getPerson();
@@ -79,11 +85,6 @@ const Usuarios = () => {
       const confirmDeleteProduct = (person) => {
         setPerson({...person});
       };
-
-    
-  
-
-
 
     return (
       <div >
@@ -172,7 +173,7 @@ const Usuarios = () => {
                         <Column field="nombre" header="Nombre" ></Column>
                         <Column field="primer_apellido" header="Primer Apellido" ></Column>
                         <Column field="segundo_apellido" header="Segundo Apellido" ></Column>
-                        <Column field="nacimiento" header="Nacimiento" ></Column>
+                        <Column field="nacimiento" header="Fecha de Nacimiento" ></Column>
                         <Column field="email" header="Email" ></Column>
                         <Column body={actionBodyTemplate}></Column>
                         </DataTable>
@@ -180,7 +181,28 @@ const Usuarios = () => {
 
                     </TabPanel>
                     <TabPanel header="Buscar Usuario">
-                       
+                    <form onSubmit={handleSubmit(onBusqueda)}>
+                    <div className="form-demo" >
+                        <div className="p-field p-col-12 p-md-4">
+                            <span className="p-float-label">
+                            <Controller name="id" control={control} render={({ field }) => (
+                            <InputNumber id={field.name} {...field}  required="true" onValueChange={(e) => field.onChange(e.value)}
+                            onChange={(e) => field.onChange(e.value)} value={field.value} />
+                            )}
+                            />
+                                {/* <InputText id="nombre" onChange={(e) => setPerson({...person,nombre:e.target.value})}  value={person.nombre} required="true"/> */}
+                                <label htmlFor="txtNombre">Ingresa ID a Buscar</label>
+                            </span>
+                        </div>
+                        
+                        <div className="p-field p-col-12 p-md-4">
+                            {/* <Button  onClick={addPerson} label="Guardar" /> */}
+                            <Button type="submit" label="Buscar" className="p-mt-2" />
+                        </div>
+                    </div>
+                    </form>
+
+
                     </TabPanel>
                 </TabView>
             </div>
