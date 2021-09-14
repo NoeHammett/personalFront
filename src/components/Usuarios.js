@@ -19,16 +19,23 @@ const Usuarios = () => {
 
   //Objeto de la persona
   const [person, setPerson] = useState ({
-      id: "",
+      id: null,
       nombre:"",
       primer_apellido:"",
-      segundo_apellido:"",
+      segundo_apellido: "",
       email:"",
       nacimiento:""
   });
   const [requestPerson, setRequestPerson] = useState ({
-    id: null
+    id: null,
+    nombre:null,
+    primer_apellido:null,
+    segundo_apellido:null,
+    email:null,
+    nacimiento:null
 });
+
+
 
   // Manejo del form
   const [formData, setFormData] = useState({})
@@ -45,11 +52,10 @@ const Usuarios = () => {
 
   const onBusqueda = (data) => {
     setFormData(data);  
-    console.log("Busqueda",data.id);
-    usuarioService.obtenerPersonaById(data.id).then(data => setPerson(data)); 
+    console.log("Busqueda",data.idPersonRequet);
+    usuarioService.obtenerPersonaById(data.idPersonRequet).then(data => setRequestPerson(data)); 
     reset(requestPerson);
 };
-console.log("Persona",person);
 
   //SERVICES
   const usuarioService = new UsuariosService();
@@ -62,29 +68,32 @@ console.log("Persona",person);
         getPerson();
     }, []);
 
+
+
+
     const actionBodyTemplate = (rowData) => {
         return (
           <React.Fragment>
             <Button
               icon="pi pi-pencil"
               className="p-button-rounded p-button-warning p-mr-2"
-              onClick={() => editProduct(rowData)}
+              // onClick={() => editProduct(rowData)}
             />
             <Button
               icon="pi pi-trash"
               className="p-button-rounded p-button-danger p-mr-2"
-              onClick={() => confirmDeleteProduct(rowData)}
+              // onClick={() => confirmDeleteProduct(rowData)}
             />
           </React.Fragment>
         );
       };
 
-      const editProduct = (person) => {
-        setPerson({ ...person });
-      };
-      const confirmDeleteProduct = (person) => {
-        setPerson({...person});
-      };
+      // const editProduct = (person) => {
+      //   setPerson({ ...person });
+      // };
+      // const confirmDeleteProduct = (person) => {
+      //   setPerson({...person});
+      // };
 
     return (
       <div >
@@ -94,9 +103,9 @@ console.log("Persona",person);
         <div className="p-d-flex p-jc-center">
               <div className = "p-field p-col-12 p-md-10">
               <div className="card">
-                <TabView className="tabview-custom">
-                    <TabPanel header="Registro Nuevo Usuario">
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                <TabView className="tabview-custom"  >
+                    <TabPanel header="Registro Nuevo Usuario" >
+                    <form onSubmit={handleSubmit(onSubmit)}  >
                     <div className="form-demo" >
                         <div className="p-field p-col-12 p-md-4">
                             <span className="p-float-label">
@@ -157,7 +166,6 @@ console.log("Persona",person);
                     </div>
                     </form>
                     </TabPanel>
-
                     
                     <TabPanel header="Lista de Usuarios">
                        <h1>Personas Registradas</h1>
@@ -170,6 +178,7 @@ console.log("Persona",person);
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
                         >
+                        <Column field="id" header="ID" ></Column>
                         <Column field="nombre" header="Nombre" ></Column>
                         <Column field="primer_apellido" header="Primer Apellido" ></Column>
                         <Column field="segundo_apellido" header="Segundo Apellido" ></Column>
@@ -180,12 +189,12 @@ console.log("Persona",person);
                     </div>
 
                     </TabPanel>
-                    <TabPanel header="Buscar Usuario">
+                    <TabPanel header="Buscar Usuario" >
                     <form onSubmit={handleSubmit(onBusqueda)}>
                     <div className="form-demo" >
                         <div className="p-field p-col-12 p-md-4">
                             <span className="p-float-label">
-                            <Controller name="id" control={control} render={({ field }) => (
+                            <Controller name="idPersonRequet" control={control} render={({ field }) => (
                             <InputNumber id={field.name} {...field}  required="true" onValueChange={(e) => field.onChange(e.value)}
                             onChange={(e) => field.onChange(e.value)} value={field.value} />
                             )}
@@ -201,6 +210,22 @@ console.log("Persona",person);
                         </div>
                     </div>
                     </form>
+                    <h2>Personas Registradas</h2>
+                    <div className="card">
+                        <DataTable
+                        value={[requestPerson]}
+                        paginator
+                        rows={5}
+                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown">
+                        <Column field="id" header="ID"></Column>
+                        <Column field="nombre" header="Nombre" ></Column>
+                        <Column field="primer_apellido" header="Primer Apellido" ></Column>
+                        <Column field="segundo_apellido" header="Segundo Apellido" ></Column>
+                        <Column field="nacimiento" header="Fecha de Nacimiento" ></Column>
+                        <Column field="email" header="Email" ></Column>
+                        <Column body={actionBodyTemplate}></Column>
+                        </DataTable>
+                    </div>
 
 
                     </TabPanel>
