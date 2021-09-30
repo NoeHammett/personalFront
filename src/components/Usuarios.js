@@ -9,6 +9,7 @@ import { Column } from "primereact/column";
 import { Calendar } from 'primereact/calendar';
 import { useForm, Controller } from 'react-hook-form';
 import { InputNumber } from 'primereact/inputnumber';
+import { Dialog } from 'primereact/dialog';
 
 import UsuariosService from '../services/UsuariosService'
 import 'primeflex/primeflex.css';
@@ -36,7 +37,6 @@ const Usuarios = () => {
 });
 
 
-
   // Manejo del form
   const [formData, setFormData] = useState({})
 
@@ -51,12 +51,32 @@ const Usuarios = () => {
   };
 
   const onBusqueda = (data) => {
-    setFormData(data);  
-    console.log("Busqueda",data.idPersonRequet);
-    usuarioService.obtenerPersonaById(data.idPersonRequet).then(data => setRequestPerson(data)); 
     reset(requestPerson);
+    setFormData(data);  
+    usuarioService.obtenerPersonaById(data.id).then(data => setRequestPerson(data)); 
+    reset(requestPerson);
+    console.log("requestPerson",requestPerson.id);
 };
 
+const onEditarPersona = (data) => {
+  reset(person);
+  setFormData(data);  
+  setPerson(data);
+  usuarioService.actualizaPerson(person);
+  getPerson();
+  // console.log("Editar Persona",person);
+  setPersonaDialogEditar(false);
+}; 
+
+const onEliminarPersona = (data) => {
+  reset(person);
+  setFormData(data);  
+  setPerson(data);
+  usuarioService.eliminarPerson(person);
+  getPerson();
+  // console.log("Eliminar Person",person);
+  setPersonaDialogEliminar(false);
+}; 
   //SERVICES
   const usuarioService = new UsuariosService();
   const getPerson = () => {
@@ -68,33 +88,47 @@ const Usuarios = () => {
         getPerson();
     }, []);
 
-
-
-
+    //Dialogos 
+    const [personaDialogEditar, setPersonaDialogEditar] = useState(false);
+    const [personaDialogEliminar, setPersonaDialogEliminar] = useState(false);
+    
     const actionBodyTemplate = (rowData) => {
         return (
           <React.Fragment>
             <Button
               icon="pi pi-pencil"
               className="p-button-rounded p-button-warning p-mr-2"
-              // onClick={() => editProduct(rowData)}
+              onClick={() => editPerson(rowData)}
             />
             <Button
               icon="pi pi-trash"
               className="p-button-rounded p-button-danger p-mr-2"
-              // onClick={() => confirmDeleteProduct(rowData)}
+               onClick={() => deletePerson(rowData)}
             />
           </React.Fragment>
         );
       };
 
-      // const editProduct = (person) => {
-      //   setPerson({ ...person });
-      // };
-      // const confirmDeleteProduct = (person) => {
-      //   setPerson({...person});
-      // };
+      const editPerson = (person) => {
+          setPerson({ ...person });
+          console.log("PERSONA",person);
+          setPersonaDialogEditar(true);
+      };
 
+      const deletePerson = (person) => {
+        setPerson({...person});
+        console.log(person);
+        setPersonaDialogEliminar(true);
+      };
+    
+      const hideDialogEditar = () => {
+        setPersonaDialogEditar(false);
+      }
+
+      const hideDialogEliminar = () => {
+       setPersonaDialogEliminar(false);
+      }
+  
     return (
       <div >
         <AppTopbar />
@@ -109,7 +143,7 @@ const Usuarios = () => {
                     <div className="form-demo" >
                         <div className="p-field p-col-12 p-md-4">
                             <span className="p-float-label">
-                            <Controller name="nombre" control={control} render={({ field }) => (
+                            <Controller name="person.nombre" control={control} render={({ field }) => (
                             <InputText id={field.name} {...field}  required="true"/>
                             )}
                             />
@@ -119,7 +153,7 @@ const Usuarios = () => {
                         </div>
                         <div className="p-field p-col-12 p-md-4">
                             <span className="p-float-label">
-                            <Controller name="primer_apellido" control={control}  render={({ field }) => (
+                            <Controller name="person.primer_apellido" control={control}  render={({ field }) => (
                             <InputText id={field.name} {...field} required="true" />
                             )}
                             />
@@ -131,7 +165,7 @@ const Usuarios = () => {
                         <div className="p-field p-col-12 p-md-4">
                             <span className="p-float-label">
                                 
-                            <Controller name="segundo_apellido" control={control} render={({ field }) => (
+                            <Controller name="person.segundo_apellido" control={control} render={({ field }) => (
                             <InputText id={field.name} {...field} required="true" />
                             )}
                             />
@@ -141,7 +175,7 @@ const Usuarios = () => {
                         </div>
                         <div className="p-field p-col-12 p-md-4">
                             <span className="p-float-label">
-                            <Controller name="email" control={control}  render={({ field }) => (
+                            <Controller name="person.email" control={control}  render={({ field }) => (
                             <InputText id={field.name} {...field}  required="true"/>
                             )}
                             />
@@ -165,10 +199,10 @@ const Usuarios = () => {
                         </div>
                     </div>
                     </form>
-                    </TabPanel>
-                    
+                    </TabPanel>         
                     <TabPanel header="Lista de Usuarios">
                        <h1>Personas Registradas</h1>
+                        
                     <div className="card">
                         <DataTable
                         value={personas}
@@ -188,13 +222,63 @@ const Usuarios = () => {
                         </DataTable>
                     </div>
 
+                        {/* Dialogo Editar */}
+                       <Dialog
+                        header="Editar"
+                        visible={personaDialogEditar}
+                        onHide={hideDialogEditar}
+                        breakpoints={{ "960px": "75vw" }}
+                        style={{ width: "40vw" }}>
+                          <h3>{[person.id]}</h3>
+                        <form onSubmit={handleSubmit(onEditarPersona)}>
+                        <div className="form-demo" >
+                        <div className="p-field p-col-12 p-md-4">
+                            <span className="p-float-label">
+                                <InputText id="nombre" onChange={(e) => setPerson({...person,nombre:e.target.value})}  value={person.nombre} required="true"/>
+                                <label htmlFor="txtNombre">Ingresa Nombre</label>
+                            </span>
+                        </div>
+                        
+                        <div className="p-field p-col-12 p-md-4">
+                            {/* <Button  onClick={editPerson} label="Guardar" /> */}
+                            <Button type="submit" label="Editar Persona" className="p-mt-2" />
+                        </div>
+                    </div>
+                    </form>
+                      </Dialog> 
+                      {/* Dialogo Eliminar */}
+                      <Dialog
+                        header="Eliminar"
+                        visible={personaDialogEliminar}
+                        onHide={hideDialogEliminar}
+                        breakpoints={{ "960px": "75vw" }}
+                        style={{ width: "40vw" }}>
+                        <p>Dialogo Eliminar </p>
+                        <h3>{[person.id]}</h3>
+
+                        <form onSubmit={handleSubmit(onEliminarPersona)}>
+                        <div className="form-demo" >
+                        <div className="p-field p-col-12 p-md-4">                              
+                                <label htmlFor="txtNombre">¿Estas segura de eliminar este usuario?</label>
+                        </div>
+                        
+                        <div className="p-field p-col-12 p-md-4">
+                            {/* <Button  onClick={editPerson} label="Guardar" /> */}
+                            <Button type="submit" label="Eliminar Usuario" className="p-mt-2" />
+                        </div>
+                    </div>
+                    </form>
+
+
+                      </Dialog> 
+
                     </TabPanel>
                     <TabPanel header="Buscar Usuario" >
                     <form onSubmit={handleSubmit(onBusqueda)}>
                     <div className="form-demo" >
                         <div className="p-field p-col-12 p-md-4">
                             <span className="p-float-label">
-                            <Controller name="idPersonRequet" control={control} render={({ field }) => (
+                            <Controller name="id" control={control} render={({ field }) => (
                             <InputNumber id={field.name} {...field}  required="true" onValueChange={(e) => field.onChange(e.value)}
                             onChange={(e) => field.onChange(e.value)} value={field.value} />
                             )}
