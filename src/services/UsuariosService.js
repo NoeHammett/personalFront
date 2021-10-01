@@ -1,6 +1,7 @@
 import axios from 'axios';
-
 export default class UsuariosService{
+    
+    
    
     obtenerPersonas (){
     let buscaPersonas = 'api/Person/getPerson';
@@ -17,15 +18,18 @@ export default class UsuariosService{
     agregarPerson (person){
     // console.log("Service Agregar Person", person)
     let agregaPerson = 'api/Person/addPerson';
-    return axios.post(agregaPerson , person).then(response  => console.log( response.data)).
+    return axios.post(agregaPerson , person).then(response  => console.log(response.data)).
     catch(error => {console.log(error.response.data.message)});
     }
         
-    actualizaPerson(person){
+    async actualizaPerson(person){
         // console.log("Service Editar Person",person);
     let actualizaPerson ='api/Person/updatePerson';
-    return axios.put(actualizaPerson + '/'+ person.id, person).then(response  => console.log( response.data)).
-    catch(error => {console.log(error.response.data.message)});
+        try{
+            return await axios.put(actualizaPerson + '/'+ person.id, person).then(response  => console.log(response.data))
+        }catch(error){
+            return console.log(error.response.data.message);
+        }   
     }
 
     eliminarPerson(person){

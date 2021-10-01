@@ -1,6 +1,6 @@
 import React, {useState , useEffect} from 'react';
-import AppTopbar from "../AppTopbar";
-import AppFooter from '../AppFooter';
+import AppTopbar from "../../AppTopbar";
+import AppFooter from "../../AppFooter";
 import { Button } from 'primereact/button';
 import { TabView,TabPanel } from 'primereact/tabview';
 import { InputText } from 'primereact/inputtext';
@@ -11,9 +11,9 @@ import { useForm, Controller } from 'react-hook-form';
 import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 
-import UsuariosService from '../services/UsuariosService'
+import UsuariosService from '../../services/UsuariosService'
 import 'primeflex/primeflex.css';
-import '../css/Tabview.css';
+import '../../css/Tabview.css';
 
 const Usuarios = () => {
   const [personas, setPersonas] = useState({});
@@ -42,55 +42,57 @@ const Usuarios = () => {
   const { control, handleSubmit, reset } = useForm({person},{requestPerson});
 
   const onSubmit = (data) => {
-      setFormData(data);  
-      // console.log("Formulario",data);
-      usuarioService.agregarPerson(data) ;
+      reset(person);
+      setFormData(data);
+      setPerson(data);
+      console.log("Formulario",person);
+      usuarioService.agregarPerson(data);
       reset(person);
       getPerson();
   };
 
   const onBusqueda = (data) => {
     reset(requestPerson);
-    setFormData(data);  
-    usuarioService.obtenerPersonaById(data.id).then(data => setRequestPerson(data)); 
+    setFormData(data);
+    usuarioService.obtenerPersonaById(data.id).then(data => setRequestPerson(data));
     reset(requestPerson);
     console.log("requestPerson",requestPerson.id);
 };
 
 const onEditarPersona = (data) => {
   reset(person);
-  setFormData(data);  
+  setFormData(data);
   setPerson(data);
   usuarioService.actualizaPerson(person);
   getPerson();
-  // console.log("Editar Persona",person);
   setPersonaDialogEditar(false);
-}; 
+};
 
 const onEliminarPersona = (data) => {
   reset(person);
-  setFormData(data);  
+  setFormData(data);
   setPerson(data);
   usuarioService.eliminarPerson(person);
   getPerson();
   // console.log("Eliminar Person",person);
   setPersonaDialogEliminar(false);
-}; 
+};
   //SERVICES
   const usuarioService = new UsuariosService();
   const getPerson = () => {
      usuarioService.obtenerPersonas().then(data => setPersonas(data));
      console.log("Personas",personas)
     };
-    
+
     useEffect(() => {
         getPerson();
-    }, []);
+    },[]);
 
-    //Dialogos 
+
+    //Dialogos
     const [personaDialogEditar, setPersonaDialogEditar] = useState(false);
     const [personaDialogEliminar, setPersonaDialogEliminar] = useState(false);
-    
+
     const actionBodyTemplate = (rowData) => {
         return (
           <React.Fragment>
@@ -119,7 +121,7 @@ const onEliminarPersona = (data) => {
         console.log(person);
         setPersonaDialogEliminar(true);
       };
-    
+
       const hideDialogEditar = () => {
         setPersonaDialogEditar(false);
       }
@@ -127,7 +129,7 @@ const onEliminarPersona = (data) => {
       const hideDialogEliminar = () => {
        setPersonaDialogEliminar(false);
       }
-  
+
     return (
       <div >
         <AppTopbar />
@@ -142,65 +144,47 @@ const onEliminarPersona = (data) => {
                     <div className="form-demo" >
                         <div className="p-field p-col-12 p-md-4">
                             <span className="p-float-label">
-                            <Controller name="person.nombre" control={control} render={({ field }) => (
-                            <InputText id={field.name} {...field}  required="true"/>
-                            )}
-                            />
-                                {/* <InputText id="nombre" onChange={(e) => setPerson({...person,nombre:e.target.value})}  value={person.nombre} required="true"/> */}
+                                <InputText id="nombre" onChange={(e) => setPerson({...person,nombre:e.target.value})}  value={person.nombre} required="true"/>
                                 <label htmlFor="txtNombre">Ingresa Nombre</label>
                             </span>
                         </div>
                         <div className="p-field p-col-12 p-md-4">
                             <span className="p-float-label">
-                            <Controller name="person.primer_apellido" control={control}  render={({ field }) => (
-                            <InputText id={field.name} {...field} required="true" />
-                            )}
-                            />
-                                {/* <InputText id="primer_apellido" onChange={(e) =>setPerson({...person,primer_apellido:e.target.value})}  value ={person.primer_apellido} /> */}
-                                <label htmlFor="txtPrimerApellido">Ingresa Primer Apellido</label>
-                            </span>
+                                <InputText id="primerApellido" onChange={(e) => setPerson({...person,primer_apellido:e.target.value})}  value={person.primer_apellido} required="true"/>
+                                <label htmlFor="txtNombre">Ingresa Primer Apellido</label>
+                            </span> 
                         </div>
                         <div className="p-field p-col-12 p-md-4">
-                            <span className="p-float-label">
-                                
-                            <Controller name="person.segundo_apellido" control={control} render={({ field }) => (
-                            <InputText id={field.name} {...field} required="true" />
-                            )}
-                            />
-                                {/* <InputText id="segundo_apellido" onChange={(e) =>setPerson({...person,segundo_apellido:e.target.value})} value={person.segundo_apellido} /> */}
-                                <label htmlFor="txtSegundoApellido">Ingresa Segundo Apellido</label>
-                            </span>
-                        </div>
-                        <div className="p-field p-col-12 p-md-4">
-                            <span className="p-float-label">
-                            <Controller name="person.email" control={control}  render={({ field }) => (
-                            <InputText id={field.name} {...field}  required="true"/>
-                            )}
-                            />
-                                {/* <InputText id="correo" onChange={(e) => setPerson({...person,email:e.target.value})} value={person.email}  /> */}
-                                <label htmlFor="txtCorreo">Ingresa Correo</label>
+                        <span className="p-float-label">
+                                <InputText id="segundoApellido" onChange={(e) => setPerson({...person,segundo_apellido:e.target.value})}  value={person.segundo_apellido} required="true"/>
+                                <label htmlFor="txtNombre">Ingresa Segundo Apellido</label>
                             </span>
                         </div>
                         <div className="p-field p-col-12 p-md-4">
                         <span className="p-float-label">
-                        <Controller name="nacimiento" control={control}  render={({ field }) => (
-                            <Calendar id={field.name} {...field}  required="true" dateFormat="dd/mm/yy"/>
-                        )}
-                        />
-                        <label htmlFor="txtNacimiento">Selecciona Fecha de Nacimiento</label>
-                        </span>
+                                <InputText id="segundoApellido" onChange={(e) => setPerson({...person,email:e.target.value})}  value={person.email} required="true"/>
+                                <label htmlFor="txtNombre">Ingresa Correo</label>
+                            </span>
                         </div>
                         <div className="p-field p-col-12 p-md-4">
-                            {/* <Button  onClick={addPerson} label="Guardar" /> */}
+                        <span className="p-float-label">
+
+                                <Calendar id="fecha"  onChange={(e) => setPerson({...person,nacimiento:e.target.value})}  value={person.nacimiento}   required="true" dateFormat="dd/mm/yy"/>
+                                <label htmlFor="txtNombre">Selecciona Fecha de Nacimiento</label>
+                            </span>
+                          
+                        
+                        </div>
+                        <div className="p-field p-col-12 p-md-4">
                             <Button type="submit" label="Guardar" className="p-mt-2" />
                         </div>
                     </div>
                     </form>
-                    </TabPanel>    
+                    </TabPanel>
                     {/* Tab Usuarios Registrados      */}
                     <TabPanel header="Lista de Usuarios">
                        <h1>Personas Registradas</h1>
-                        
+
                     <div className="card">
                         <DataTable
                         value={personas}
@@ -208,8 +192,7 @@ const onEliminarPersona = (data) => {
                         rows={10}
                         rowsPerPageOptions={[10, 25, 50]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
-                        >
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products">
                         <Column field="id" header="ID" ></Column>
                         <Column field="nombre" header="Nombre" ></Column>
                         <Column field="primer_apellido" header="Primer Apellido" ></Column>
@@ -235,14 +218,23 @@ const onEliminarPersona = (data) => {
                                 <InputText id="nombre" onChange={(e) => setPerson({...person,nombre:e.target.value})}  value={person.nombre} required="true"/>
                                 <label htmlFor="txtNombre">Ingresa Nombre</label>
                             </span>
-                        </div>                        
+                            <br/>
+                            <span className="p-float-label">
+                                <InputText id="primerApellido" onChange={(e) => setPerson({...person,primer_apellido:e.target.value})}  value={person.primer_apellido} required="true"/>
+                                <label htmlFor="txtNombre">Ingresa Primer Apellido</label>
+                            </span>
+                            <br/>
+                            <span className="p-float-label">
+                                <InputText id="segundoApellido" onChange={(e) => setPerson({...person,segundo_apellido:e.target.value})}  value={person.segundo_apellido} required="true"/>
+                                <label htmlFor="txtNombre">Ingresa Segundo Apellido</label>
+                            </span>
+                        </div>
                         <div className="p-field p-col-12 p-md-4">
-                            {/* <Button  onClick={editPerson} label="Guardar" /> */}
                             <Button type="submit" label="Editar Persona" className="p-mt-2" />
                         </div>
                     </div>
                     </form>
-                      </Dialog> 
+                      </Dialog>
                       {/* Dialogo Eliminar */}
                       <Dialog
                         header="Eliminar"
@@ -250,21 +242,19 @@ const onEliminarPersona = (data) => {
                         onHide={hideDialogEliminar}
                         breakpoints={{ "960px": "75vw" }}
                         style={{ width: "40vw" }}>
-                        <p>Dialogo Eliminar </p>
                         <h3>{[person.id]}</h3>
 
                         <form onSubmit={handleSubmit(onEliminarPersona)}>
                         <div className="form-demo" >
-                        <div className="p-field p-col-12 p-md-4">                              
+                        <div className="p-field p-col-12 p-md-4">
                                 <label htmlFor="txtNombre">¿Estas segura de eliminar este usuario?</label>
                         </div>
                         <div className="p-field p-col-12 p-md-4">
-                            {/* <Button  onClick={editPerson} label="Guardar" /> */}
                             <Button type="submit" label="Eliminar Usuario" className="p-mt-2" />
                         </div>
                     </div>
                     </form>
-                      </Dialog> 
+                      </Dialog>
                     </TabPanel>
 
                     {/* Tab de Buscar Usuario */}
@@ -282,9 +272,8 @@ const onEliminarPersona = (data) => {
                                 <label htmlFor="txtNombre">Ingresa ID a Buscar</label>
                             </span>
                         </div>
-                        
+
                         <div className="p-field p-col-12 p-md-4">
-                            {/* <Button  onClick={addPerson} label="Guardar" /> */}
                             <Button type="submit" label="Buscar" className="p-mt-2" />
                         </div>
                     </div>
@@ -320,14 +309,13 @@ const onEliminarPersona = (data) => {
                                 <InputText id="nombre" onChange={(e) => setPerson({...person,nombre:e.target.value})}  value={person.nombre} required="true"/>
                                 <label htmlFor="txtNombre">Ingresa Nombre</label>
                             </span>
-                        </div>                        
+                        </div>
                         <div className="p-field p-col-12 p-md-4">
-                            {/* <Button  onClick={editPerson} label="Guardar" /> */}
                             <Button type="submit" label="Editar Persona" className="p-mt-2" />
                         </div>
                     </div>
                     </form>
-                      </Dialog> 
+                      </Dialog>
 
                       {/* Dialogo Eliminar */}
                       <Dialog
@@ -341,16 +329,15 @@ const onEliminarPersona = (data) => {
 
                         <form onSubmit={handleSubmit(onEliminarPersona)}>
                         <div className="form-demo" >
-                        <div className="p-field p-col-12 p-md-4">                              
+                        <div className="p-field p-col-12 p-md-4">
                                 <label htmlFor="txtNombre">¿Estas segura de eliminar este usuario?</label>
                         </div>
                         <div className="p-field p-col-12 p-md-4">
-                            {/* <Button  onClick={editPerson} label="Guardar" /> */}
                             <Button type="submit" label="Eliminar Usuario" className="p-mt-2" />
                         </div>
                     </div>
                     </form>
-                      </Dialog> 
+                      </Dialog>
                     </TabPanel>
                 </TabView>
             </div>
