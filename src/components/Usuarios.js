@@ -36,7 +36,6 @@ const Usuarios = () => {
     nacimiento:null
 });
 
-
   // Manejo del form
   const [formData, setFormData] = useState({})
 
@@ -157,7 +156,6 @@ const onEliminarPersona = (data) => {
                             <InputText id={field.name} {...field} required="true" />
                             )}
                             />
-                  
                                 {/* <InputText id="primer_apellido" onChange={(e) =>setPerson({...person,primer_apellido:e.target.value})}  value ={person.primer_apellido} /> */}
                                 <label htmlFor="txtPrimerApellido">Ingresa Primer Apellido</label>
                             </span>
@@ -179,7 +177,6 @@ const onEliminarPersona = (data) => {
                             <InputText id={field.name} {...field}  required="true"/>
                             )}
                             />
-
                                 {/* <InputText id="correo" onChange={(e) => setPerson({...person,email:e.target.value})} value={person.email}  /> */}
                                 <label htmlFor="txtCorreo">Ingresa Correo</label>
                             </span>
@@ -199,7 +196,8 @@ const onEliminarPersona = (data) => {
                         </div>
                     </div>
                     </form>
-                    </TabPanel>         
+                    </TabPanel>    
+                    {/* Tab Usuarios Registrados      */}
                     <TabPanel header="Lista de Usuarios">
                        <h1>Personas Registradas</h1>
                         
@@ -237,8 +235,7 @@ const onEliminarPersona = (data) => {
                                 <InputText id="nombre" onChange={(e) => setPerson({...person,nombre:e.target.value})}  value={person.nombre} required="true"/>
                                 <label htmlFor="txtNombre">Ingresa Nombre</label>
                             </span>
-                        </div>
-                        
+                        </div>                        
                         <div className="p-field p-col-12 p-md-4">
                             {/* <Button  onClick={editPerson} label="Guardar" /> */}
                             <Button type="submit" label="Editar Persona" className="p-mt-2" />
@@ -261,18 +258,16 @@ const onEliminarPersona = (data) => {
                         <div className="p-field p-col-12 p-md-4">                              
                                 <label htmlFor="txtNombre">¿Estas segura de eliminar este usuario?</label>
                         </div>
-                        
                         <div className="p-field p-col-12 p-md-4">
                             {/* <Button  onClick={editPerson} label="Guardar" /> */}
                             <Button type="submit" label="Eliminar Usuario" className="p-mt-2" />
                         </div>
                     </div>
                     </form>
-
-
                       </Dialog> 
-
                     </TabPanel>
+
+                    {/* Tab de Buscar Usuario */}
                     <TabPanel header="Buscar Usuario" >
                     <form onSubmit={handleSubmit(onBusqueda)}>
                     <div className="form-demo" >
@@ -310,8 +305,52 @@ const onEliminarPersona = (data) => {
                         <Column body={actionBodyTemplate}></Column>
                         </DataTable>
                     </div>
+                     {/* Dialogo Editar */}
+                     <Dialog
+                        header="Editar"
+                        visible={personaDialogEditar}
+                        onHide={hideDialogEditar}
+                        breakpoints={{ "960px": "75vw" }}
+                        style={{ width: "40vw" }}>
+                          <h3>{[person.id]}</h3>
+                        <form onSubmit={handleSubmit(onEditarPersona)}>
+                        <div className="form-demo" >
+                        <div className="p-field p-col-12 p-md-4">
+                            <span className="p-float-label">
+                                <InputText id="nombre" onChange={(e) => setPerson({...person,nombre:e.target.value})}  value={person.nombre} required="true"/>
+                                <label htmlFor="txtNombre">Ingresa Nombre</label>
+                            </span>
+                        </div>                        
+                        <div className="p-field p-col-12 p-md-4">
+                            {/* <Button  onClick={editPerson} label="Guardar" /> */}
+                            <Button type="submit" label="Editar Persona" className="p-mt-2" />
+                        </div>
+                    </div>
+                    </form>
+                      </Dialog> 
 
+                      {/* Dialogo Eliminar */}
+                      <Dialog
+                        header="Eliminar"
+                        visible={personaDialogEliminar}
+                        onHide={hideDialogEliminar}
+                        breakpoints={{ "960px": "75vw" }}
+                        style={{ width: "40vw" }}>
+                        <p>Dialogo Eliminar </p>
+                        <h3>{[person.id]}</h3>
 
+                        <form onSubmit={handleSubmit(onEliminarPersona)}>
+                        <div className="form-demo" >
+                        <div className="p-field p-col-12 p-md-4">                              
+                                <label htmlFor="txtNombre">¿Estas segura de eliminar este usuario?</label>
+                        </div>
+                        <div className="p-field p-col-12 p-md-4">
+                            {/* <Button  onClick={editPerson} label="Guardar" /> */}
+                            <Button type="submit" label="Eliminar Usuario" className="p-mt-2" />
+                        </div>
+                    </div>
+                    </form>
+                      </Dialog> 
                     </TabPanel>
                 </TabView>
             </div>
