@@ -16,9 +16,15 @@ const menu = [
     {
       label: "Usuarios", icon: "pi pi-folder ",
       items: [
-          { label: 'Usuarios', icon: 'pi pi-file', command:()=>{  window.location.hash="/Usuarios"; }},
-        //   { label: 'Actividades', icon: 'pi pi-file', command:()=>{ window.location.hash="/Actividades"; }}
+          { label: 'Usuarios', icon: 'pi pi-file', command:()=>{  window.location.hash="/Usuarios"; }}
       ] 
+    },
+    {separator: true},
+    {
+      label: "Actividades", icon: "pi pi-folder ",
+      items: [
+        { label: 'Actividades', icon: 'pi pi-file', command:()=>{ window.location.hash="/Actividades"; }}
+      ]
     }
   ]; 
 

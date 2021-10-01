@@ -1,14 +1,13 @@
 import React from 'react';
 import AppTopbar from "./AppTopbar";
 import {Switch, Route, HashRouter} from 'react-router-dom';
-import Usuarios from "./components/Usuarios.js"
-import Actividades from "./components/Actividades.js"
+import Usuarios from "./components/Usuarios/Usuarios.js";
+import Actividades from "./components/Actividades/Actividades.js"
 import Login from "./components/Login.js"
 
 function App() {
   return (
     <div>
-    {/* <AppTopbar/> */}
           <HashRouter>
           <Switch>
               <Route  path="/Login"><Login/></Route>
